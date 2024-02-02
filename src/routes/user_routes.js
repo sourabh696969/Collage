@@ -14,18 +14,20 @@ router.route("/register").post(upload.fields(
             maxCount: 1
         }
     ]
-), registerUser)
+), registerUser) //check
 
-router.route("/login").post(loginUser)
+router.route("/login").post(loginUser)//check
 // secured routes
-router.route("/logout").post(verifyJWT, logoutUser)
-router.route("/refreshToken").post(refreshAccessToken)
-router.route("/change-password").post(verifyJWT, ChangeCurrentPassword)
-router.route("/current-user").post(verifyJWT, getCurrentUser)
+router.route("/logout").post(verifyJWT, logoutUser)//check
+router.route("/refreshToken").post(refreshAccessToken)//check
+router.route("/change-password").post(verifyJWT, ChangeCurrentPassword)//check
+router.route("/current-user").get(verifyJWT, getCurrentUser)//check
 router.route("/update-account-details").patch(verifyJWT, updateAccountDetails)
+// images update
 router.route("/avatar").patch(verifyJWT, upload.single("avatar"), updateAvatar)
-router.route("/covar-image").patch(verifyJWT, upload.single("covarImage"), updatecoverImage)
-router.route("/c/:userName").get(verifyJWT, getUserChannelProfile)
-router.route("/watch-history").get(verifyJWT, getWatchHistroy)
+router.route("/covar-image").patch(verifyJWT, upload.single("covarImage"),updatecoverImage)
+
+router.route("/c/:userName").get(verifyJWT, getUserChannelProfile)//check
+router.route("/history").get(verifyJWT, getWatchHistroy)//check
 
 export default router;
