@@ -84,7 +84,7 @@ const registerUser = asyncHandler(async (req, res) => {
     })
 
     const createdUser = await User.findById(user._id).select(
-        "-password -refreshToken"
+        "-password -refreshToken -watchHistoy"
     )
 
     if (!createdUser) {
@@ -173,7 +173,7 @@ const logoutUser = asyncHandler(async (req, res) => {
         httpOnly: true,
         secure: true
     }
-    return res.status(200).clearCookie("accessToken", options).clearCookie("refreshToken", options).json(new ApiResponse(200, "User logged Out Succssfully"))
+    return res.status(200).clearCookie("accessToken", options).clearCookie("refreshToken", options).json(new ApiResponse(200, {},"User logged Out Succssfully"))
 })
 // refreshToken
 const refreshAccessToken = asyncHandler(async (req, res) => {
@@ -229,6 +229,16 @@ const ChangeCurrentPassword = asyncHandler(async (req, res) => {
 const getCurrentUser = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, req.user, "current User fetched succufully!!"))
 })
+
+//get all user
+const getAllUser = asyncHandler(async(_,res)=>{
+      const users =await User.find().select("-watchHistoy -password -createdAt -updatedAt -refreshToken")
+      if (!users || users.length === 0) {
+        // If no videos are found, return a 404 error
+        throw new ApiError(404, "No user  found");
+    }
+    return res.status(200).json(new ApiResponse(200, users, "All  users fetched successfully"))
+})
 // update user details
 const updateAccountDetails = asyncHandler(async (req, res) => {
     const { userName, lastName, email } = req.body
@@ -242,7 +252,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
             lastName,
             email
         }
-    }, { new: true }).select("-password")
+    }, { new: true }).select("-password -watchHistoy -createdAt -updatedAt")
     return res.status(200).json(new ApiResponse(200, user, "Account Details Update Succfully"))
 })
 
@@ -261,8 +271,9 @@ const updateAvatar = asyncHandler(async (req, res) => {
         $set: {
             avatar: avatar.url
         }
-    }, { new: true }).select("-password")
-    return res.status(200).json(new ApiResponse(200, user, "user avatar update succssfully"))
+    }, { new: true })
+    // .select("-password -lastName -email -coverImage -watchHistoy -createdAt -updatedAt -refreshToken")
+    return res.status(200).json(new ApiResponse(200,{}, "user avatar update succssfully"))
 })
 // coverImage
 const updatecoverImage = asyncHandler(async (req, res) => {
@@ -279,8 +290,9 @@ const updatecoverImage = asyncHandler(async (req, res) => {
         $set: {
             coverImage: coverImage.url
         }
-    }, { new: true }).select("-password")
-    return res.status(200).json(new ApiResponse(200, user, "user coverImage update succssfully"))
+    }, { new: true })
+    // .select("-password")
+    return res.status(200).json(new ApiResponse(200, {}, "user coverImage update succssfully"))
 })
 
 // get user channel profile
@@ -454,4 +466,4 @@ const getWatchHistroy = asyncHandler(async(req, res) => {
     )
 })
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken, ChangeCurrentPassword, getCurrentUser, updateAccountDetails, updateAvatar, updatecoverImage, getUserChannelProfile, getWatchHistroy }
+export { registerUser, loginUser, logoutUser, refreshAccessToken, ChangeCurrentPassword, getCurrentUser, updateAccountDetails, updateAvatar, updatecoverImage, getUserChannelProfile, getWatchHistroy ,getAllUser}
