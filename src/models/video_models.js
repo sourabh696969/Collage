@@ -31,10 +31,16 @@ const videoSchema = new Schema(
         type : Boolean, 
         default:true
      },
-     userId:{
-        type : Schema.Types.ObjectId,
-        ref : "User"
-     }
+     videoOwner:{
+      _id: {
+         type : Schema.Types.ObjectId,
+         ref : "User"
+      },
+     userName: {
+         type : String,
+      }
+   }
+     
 
 },{timestamps:true})
 

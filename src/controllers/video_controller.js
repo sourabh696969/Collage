@@ -10,8 +10,8 @@ import mongoose from "mongoose";
 const uploadVideo = asyncHandler(async (req, res) => {
     const { title, desription } = req.body
     // Get the user ID from the request
-    const userId = req.user._id;
-    
+    const UserId = req.user._id;
+
     if (
         [title, desription].some((field) => field?.trim() === "")
     ) {
@@ -32,16 +32,19 @@ const uploadVideo = asyncHandler(async (req, res) => {
     }
 
     const videoFiles = await uploadOnCloudinary(videoFilesLocalPath)
-
+    const users = await User.findById(UserId)
     const video = await Video.create({
         title: title.toLowerCase(),
         desription: desription || "",
         thumbnail: thumbnail.url,
         videoFiles: videoFiles.url,
-        userId: userId ,
+        videoOwner: {
+            _id: users._id,
+            userName: users.userName
+        },
     })
 
-    const createVideo = await Video.findById(video._id).populate("userId","userName _id")
+    const createVideo = await Video.findById(video._id)
 
     if (!createVideo) {
         throw new ApiError(500, "Something went wrong while uploading the video")
