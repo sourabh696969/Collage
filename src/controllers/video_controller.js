@@ -124,24 +124,17 @@ const getallVideo = asyncHandler(async (req, res) => {
     // Constructing the query object based on the parameters
     const filter = {}; // Initialize an empty filter object
 
-    // Apply any filtering based on the userId or any other criteria
     if (userId) {
         filter.userId = userId;
     }
-    // You can add more filtering logic here based on other query parameters
-
-    // Execute the database query with pagination and filtering
     const videos = await Video.find(filter)
         .skip((page - 1) * limit) // Skip records based on pagination
         .limit(parseInt(limit)) // Limit the number of records per page
         .sort({ [sortBy]: sortType === 'desc' ? -1 : 1 }); // Sort the records based on sortBy and sortType
 
     if (!videos || videos.length === 0) {
-        // If no videos are found, return a 404 error
         throw new ApiError(404, "No videos found");
     }
-
-    // Return the videos in the response
     return res.status(200).json(new ApiResponse(200, videos, "All uploaded videos fetched successfully"));
 });
 
