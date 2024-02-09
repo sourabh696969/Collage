@@ -9,6 +9,9 @@ import mongoose from "mongoose";
 
 const uploadVideo = asyncHandler(async (req, res) => {
     const { title, desription } = req.body
+    // Get the user ID from the request
+    const userId = req.user._id;
+    
     if (
         [title, desription].some((field) => field?.trim() === "")
     ) {
@@ -35,10 +38,10 @@ const uploadVideo = asyncHandler(async (req, res) => {
         desription: desription || "",
         thumbnail: thumbnail.url,
         videoFiles: videoFiles.url,
-
+        userId: userId ,
     })
 
-    const createVideo = await Video.findById(video._id)
+    const createVideo = await Video.findById(video._id).populate("userId","userName _id")
 
     if (!createVideo) {
         throw new ApiError(500, "Something went wrong while uploading the video")
