@@ -25,4 +25,26 @@ const uploadOnCloudinary = async (localFilePath) => {
     }
 }
 
-export { uploadOnCloudinary };
+// pdf
+const PdfuploadOnCloudinary = async (localFilePath) => {
+    try {
+        if (!localFilePath) {
+            console.error("File path not provided");
+            return null;
+        }
+                const response = await cloudinary.uploader.upload(localFilePath, {
+                    resource_type: "auto",
+                    format: "pdf",
+                    quality: 80,
+        });
+        console.log("File uploaded successfully:", response.url);
+        fs.unlinkSync(localFilePath);
+        return response;
+    } catch (error) {
+        console.error("Error uploading file to Cloudinary:", error);
+        fs.unlinkSync(localFilePath); // Delete the local file in case of error
+        return null;
+    }
+};
+
+export { uploadOnCloudinary,PdfuploadOnCloudinary };

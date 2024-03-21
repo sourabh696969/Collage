@@ -2,19 +2,15 @@ import mongoose, { Schema } from "mongoose";
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
-// user model
-const userSchema = new Schema(
+// admin model
+const adminSchema = new Schema(
     {
-        userName: {
+        Name: {
             type: String,
             required: true,
             unique: true,
             lowercase: true,
             index: true
-        },
-        lastName: {
-            type: String,
-            lowercase: true,
         },
         email: {
             type: String,
@@ -25,15 +21,6 @@ const userSchema = new Schema(
         avatar: {
             type: String,  //cloudinary url
         },
-        coverImage: {
-            type: String,  //cloudinary url
-        },
-        watchHistoy: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "Video"
-            }
-        ],
         password: {
             type: String,
             required: [true, "password is required"],
@@ -48,7 +35,7 @@ const userSchema = new Schema(
     }, { timestamps: true })
 
 // for pre save password and bcrypt pawword in hash
-userSchema.pre("save", async function (next) {
+adminSchema.pre("save", async function (next) {
     if(!this.isModified("password")) return next();
 
     this.password = await bcrypt.hash(this.password, 10)
@@ -56,12 +43,12 @@ userSchema.pre("save", async function (next) {
 })
 
 // check and compare passwrod 
-userSchema.methods.isPasswordCorrect = async function(password){
+adminSchema.methods.isPasswordCorrect = async function(password){
     return await bcrypt.compare(password, this.password)
 }
 
 // genrate token
-userSchema.methods.generateAccessToken = function(){
+adminSchema.methods.generateAccessToken = function(){
     return jwt.sign(
         {
             _id: this._id,
@@ -77,7 +64,7 @@ userSchema.methods.generateAccessToken = function(){
 }
 
 // 
-userSchema.methods.generateRefreshToken = function(){
+adminSchema.methods.generateRefreshToken = function(){
     return jwt.sign(
         {
             _id: this._id,
@@ -90,4 +77,4 @@ userSchema.methods.generateRefreshToken = function(){
     )
 }
 
-export const User = mongoose.model("User", userSchema);
+export const Admin = mongoose.model("Admin", adminSchema);

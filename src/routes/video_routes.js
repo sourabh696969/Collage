@@ -1,10 +1,10 @@
 import { Router } from "express";
-import {getallVideo, uploadVideo } from "../controllers/video_controller.js";
+import {getallVideo, uploadVideo,deleteVideo ,getSinglevideo,updatevideodetails,thumbnailupdate} from "../controllers/video_controller.js";
 import { upload } from "../middlewares/multer_middleware.js";
 import { verifyJWT } from "../middlewares/auth_middleware.js";
 const router = Router()
 
-router.route("/upload").post(verifyJWT, upload.fields([
+router.route("/uploadVideo").post(verifyJWT, upload.fields([
     {
         name: "thumbnail",
         maxCount: 1
@@ -13,7 +13,10 @@ router.route("/upload").post(verifyJWT, upload.fields([
         maxCount: 1
     }
 ]), uploadVideo)
-// router.route('/getUploadVideo').get(verifyJWT, getUploadVideo)
-router.route('/getallVideo').get(verifyJWT,getallVideo )
+router.route('/getallVideo').get(getallVideo )
+router.route('/getallVideo/:id').get(getSinglevideo )
+router.route('/deleteVideo/:id').delete(verifyJWT, deleteVideo)
+router.route('/updatevideo/:id').put(verifyJWT, updatevideodetails)
+router.route("/updatethambnail/:id").patch(verifyJWT, upload.single("thumbnail"),thumbnailupdate)
 
 export default router;
